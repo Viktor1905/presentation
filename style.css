@@ -1,0 +1,37 @@
+.codeSmall {
+    font-size: 0.6em !important;
+    line-height: 1.2 !important;
+}
+.shadow {
+    text-shadow: 2px 2px 4px #000000 !important;
+}
+.demoBtn{
+    padding: 15px 30px;
+    font-size: 1.2em;
+}
+.demo {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    margin: 0 auto;
+}
+.demoContent {
+    min-height: 100px;
+    padding: 10px;
+    border: 1px dashed #666;
+}
+.demoNav {
+    margin-bottom: 15px;
+}
+.demoLink {
+    color: #4FC08D;
+    margin-right: 15px;
+}
+.demoLink:nth-child(3) {
+    margin-right: 0;
+}
+.demoWrapper {
+    background: #333;
+    padding: 20px;
+    border-radius: 5px;
+}

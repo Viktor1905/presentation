@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>History API / Routing</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/black.css">
+
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">
+		<link rel="stylesheet" href="style.css">
+	</head>
+	<body>
+	<div class="reveal">
+		<div class="slides">
+			<section>
+				<h1 class="shadow">JS History API & Routing</h1>
+				<h3 class="shadow">Single Page Applications Navigation</h3>
+			</section>
+
+			<section>
+				<section>
+					<h2>The Problem</h2>
+					<p>Traditional websites reload the entire page on navigation</p>
+				</section>
+
+				<section>
+					<h3>SPA Requirements</h3>
+					<ul>
+						<li class="fragment">Smooth transitions between views</li>
+						<li class="fragment">Working browser navigation (back/forward)</li>
+						<li class="fragment">Shareable URLs</li>
+						<li class="fragment">No full page reloads</li>
+					</ul>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h2>History API to the Rescue</h2>
+					<p>Manipulate browser history without page reloads</p>
+				</section>
+
+				<section>
+					<h3>Key Methods</h3>
+					<pre><code class="hljs javascript" data-trim>
+                        // Add new history entry
+                        history.pushState(state, title, url);
+
+                        // Replace current entry
+                        history.replaceState(state, title, url);
+
+                        // Handle navigation events
+                        window.addEventListener('popstate', (event) => {
+                            console.log(event.state);
+                        });
+                    </code></pre>
+				</section>
+
+			</section>
+
+			<section>
+				<section>
+					<h2>Building a Simple Router</h2>
+					<p>Let's implement basic SPA navigation</p>
+				</section>
+
+				<section>
+					<h3>Step 1: Intercept Link Clicks</h3>
+					<pre><code class="hljs javascript codeSmall" data-trim>
+                        document.addEventListener('click', (e) => {
+                            const link = e.target.closest('a');
+                            if (!link) return;
+
+                            e.preventDefault();
+                            const url = link.href;
+
+                            // Update URL without reload
+                            history.pushState({ url }, '', url);
+
+                            // Load new content
+                            loadPage(url);
+                        });
+                    </code></pre>
+				</section>
+
+				<section>
+					<h3>Step 2: Dynamic Content Loading</h3>
+					<pre><code class="hljs javascript codeSmall" data-trim>
+                        async function loadPage(url) {
+                            // Fetch new content
+                            const res = await fetch(url);
+                            const html = await res.text();
+
+                            // Update the page
+                            document.getElementById('app').innerHTML = html;
+
+                            // Update scroll position if needed
+                            window.scrollTo(0, 0);
+                        }
+                    </code></pre>
+				</section>
+
+				<section>
+					<h3>Step 3: Handle Back/Forward</h3>
+					<pre><code class="hljs javascript" data-trim>
+                        window.addEventListener('popstate', () => {
+                            loadPage(window.location.href);
+                        });
+                    </code></pre>
+				</section>
+			</section>
+
+			<section>
+				<section>
+					<h2>Advanced Techniques</h2>
+				</section>
+
+				<section>
+					<h3>Scroll Position Management</h3>
+					<pre><code class="hljs javascript codeSmall" data-trim>
+                        // Save scroll position before navigation
+                        history.replaceState(
+                            { scrollY: window.scrollY },
+                            '',
+                            window.location.href
+                        );
+
+                        // Restore on popstate
+                        window.addEventListener('popstate', (e) => {
+                            if (e.state?.scrollY) {
+                                window.scrollTo(0, e.state.scrollY);
+                            }
+                        });
+                    </code></pre>
+				</section>
+
+				<section>
+					<h3>Dynamic Metadata</h3>
+					<pre><code class="hljs javascript" data-trim>
+                        function updateMetadata(title, description) {
+                            document.title = title;
+                            document.querySelector('meta[name="description"]')
+                                .setAttribute('content', description);
+                        }
+                    </code></pre>
+				</section>
+			</section>
+
+			<section>
+				<h2>Limitations & Challenges</h2>
+				<ul>
+					<li class="fragment">SEO requires server-side rendering</li>
+					<li class="fragment">Direct URL access needs server configuration</li>
+					<li class="fragment">Browser compatibility (IE9+ for basic features)</li>
+					<li class="fragment">State management complexity</li>
+				</ul>
+			</section>
+
+			<section>
+				<section>
+					<h2>Live Demo</h2>
+					<p>Let's see it in action!</p>
+					<button id="demoBtn" class="demoBtn">
+						Start Demo
+					</button>
+					<div id="demoOutput" class="demo"></div>
+				</section>
+			</section>
+
+			<section>
+				<h2>Key Takeaways</h2>
+				<ul>
+					<li class="fragment">History API enables SPA navigation</li>
+					<li class="fragment">Essential for modern web apps</li>
+					<li class="fragment">Foundation for React Router, Vue Router, etc.</li>
+					<li class="fragment">Combine with SSR for best results</li>
+				</ul>
+			</section>
+
+			<section>
+				<h1>Thank You!</h1>
+			</section>
+		</div>
+	</div>
+
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/markdown/markdown.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+
+			Reveal.initialize({
+				hash: true,
+				plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+			});
+
+			document.getElementById('demoBtn').addEventListener('click', function() {
+				const output = document.getElementById('demoOutput');
+				output.innerHTML = `
+                <div class="demoWrapper">
+                    <h4>Mini Router Demo</h4>
+                    <nav class="demoNav">
+                        <a href="/home" class="demoLink">Home</a>
+                        <a href="/about" class="demoLink">About</a>
+                        <a href="/contact" class="demoLink">Contact</a>
+                    </nav>
+                    <div id="demoContent" class="demoContent">
+                        Click the links above to simulate routing
+                    </div>
+                </div>
+            `;
+
+				document.querySelectorAll('#demoOutput a').forEach(link => {
+					link.addEventListener('click', function(e) {
+						e.preventDefault();
+						const path = e.target.getAttribute('href');
+						history.pushState({}, '', path);
+						document.getElementById('demoContent').innerHTML = `
+                        Current page: ${path}<br>
+                        <small>URL changed without reload!</small>
+                    `;
+					});
+				});
+			});
+		</script>
+	</body>
+</html>
