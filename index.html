@@ -25,15 +25,16 @@
 				<section>
 					<h2>The Problem</h2>
 					<p>Traditional websites reload the entire page on navigation</p>
+					<img src="https://media.giphy.com/media/3o7TKsQ8gqVrXhQZIQ/giphy.gif" alt="Page reload" width="400">
 				</section>
 
 				<section>
 					<h3>SPA Requirements</h3>
 					<ul>
-						<li class="fragment">Smooth transitions between views</li>
-						<li class="fragment">Working browser navigation (back/forward)</li>
-						<li class="fragment">Shareable URLs</li>
-						<li class="fragment">No full page reloads</li>
+						<li>Smooth transitions between views</li>
+						<li>Working browser navigation (back/forward)</li>
+						<li>Shareable URLs</li>
+						<li>No full page reloads</li>
 					</ul>
 				</section>
 			</section>
@@ -52,6 +53,9 @@
 
                         // Replace current entry
                         history.replaceState(state, title, url);
+
+                        // Moves forward or backward
+                        history.go(n);
 
                         // Handle navigation events
                         window.addEventListener('popstate', (event) => {
@@ -72,8 +76,9 @@
 					<h3>Step 1: Intercept Link Clicks</h3>
 					<pre><code class="hljs javascript codeSmall" data-trim>
                         document.addEventListener('click', (e) => {
-                            const link = e.target.closest('a');
-                            if (!link) return;
+                            const link = e.target;
+
+                            if (!link || !link.href) return;
 
                             e.preventDefault();
                             const url = link.href;
@@ -177,7 +182,6 @@
 					<li class="fragment">History API enables SPA navigation</li>
 					<li class="fragment">Essential for modern web apps</li>
 					<li class="fragment">Foundation for React Router, Vue Router, etc.</li>
-					<li class="fragment">Combine with SSR for best results</li>
 				</ul>
 			</section>
 
